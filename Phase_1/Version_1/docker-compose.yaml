@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+    mysql:
+        container_name: mysql_v1
+        image: mysql:8
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always        
+        volumes:
+            - ./schema:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: user
+            MYSQL_PASSWORD: root
+            MYSQL_DATABASE: 1-1
+        ports:
+            - "3306:3306"
+        env_file: 
+            - .env
+
+    app:
+        container_name: app_v1
+        build: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/code
+        links: 
+            - "mysql:mysql"
+        env_file: 
+            - .env
